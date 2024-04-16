@@ -41,18 +41,19 @@ builder.Services.AddAuthentication(options =>
 });
 
 //Add Authentication to Swagger UI
-builder.Services.AddSwaggerGen(options => { 
+builder.Services.AddSwaggerGen(options =>
+{
     options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
     {
-        In=ParameterLocation.Header,
-        Name="Authorization",
-        Type=SecuritySchemeType.ApiKey
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
     });
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
 builder.Services.AddScoped<IAuthRepository, AuthService>();
-builder.Services.AddScoped<IJWTRepository,JWTService>();
+builder.Services.AddScoped<IJWTRepository, JWTService>();
 
 
 var app = builder.Build();
@@ -67,13 +68,26 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/swagger/index.html");
+        return;
+    }
+    await next();
+});
+
 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+//}
+
+app.UseCors(options => options.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
 
 app.UseHttpsRedirection();
 
