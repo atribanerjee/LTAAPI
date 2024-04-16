@@ -3,7 +3,6 @@ using LTAAPI.Services;
 using LTADB;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
@@ -58,27 +57,19 @@ builder.Services.AddScoped<IJWTRepository, JWTService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-
 app.UseSwagger();
+
 app.UseSwaggerUI();
 
-app.Use(async (context, next) =>
-{
-    if (context.Request.Path == "/")
-    {
-        context.Response.Redirect("/swagger/index.html");
-        return;
-    }
-    await next();
-});
-
-
+//app.Use(async (context, next) =>
+//{
+//    if (context.Request.Path == "/")
+//    {
+//        context.Response.Redirect("/swagger/index.html");
+//        return;
+//    }
+//    await next();
+//});
 
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
