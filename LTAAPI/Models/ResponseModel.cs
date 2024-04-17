@@ -5,5 +5,6 @@
         public string prompt { get; set; }
         public long created { get; set; }
         public List<Link>? data { get; set; }
+        public String? Correct { get; set; }
     }
 }

@@ -80,6 +80,7 @@ namespace LTAAPI.Controllers
                                 var content = await Message.Content.ReadAsStringAsync();
                                 resp = JsonConvert.DeserializeObject<ResponseModel>(content);
                                 resp.prompt = Phrase;
+                                resp.Correct = FinalStatement;
                             }
                         }
 
