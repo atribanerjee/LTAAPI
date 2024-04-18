@@ -9,6 +9,7 @@
         public String UserName { get; set; } = String.Empty;
         public String PhoneNo { get; set; } = String.Empty;
         public String Password { get; set; } = String.Empty;
+        public String? Address { get; set; }
         public Boolean IsActive { get; set; }
         public DateTime CreatedDateTime { get; set; }
     }

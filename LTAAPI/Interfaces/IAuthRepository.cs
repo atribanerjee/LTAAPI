@@ -5,5 +5,9 @@ namespace LTAAPI.Interfaces
     public interface IAuthRepository
     {
         Task<UsersModel> UserLogin(LoginModel loginModel);
+        Task<Boolean> UserRegistation(RegisterRequestModel model);
+        Task<Boolean> IsExistUserEmail(string email);
+        Task<Boolean> IsExistUserUserName(String Username);
+        Task<Boolean> IsExistUserNameAndEmail(String Username, String Email);
     }
 }

@@ -13,12 +13,13 @@ namespace LTADB.POCO
     {
         [Key]
         public Int64 ID { get; set; }
-        public String FirstName { get; set; }
-        public String LastName { get; set; }
-        public required String Email { get; set; }
-        public required String UserName { get; set; }
-        public String PhoneNo { get; set; }
-        public required String Password { get; set; }
+        public String? FirstName { get; set; }
+        public String? LastName { get; set; }
+        public String Email { get; set; }
+        public  String UserName { get; set; }
+        public String? PhoneNo { get; set; }
+        public String Password { get; set; }
+        public String? Address { get; set; }
         public Boolean IsActive { get; set; }
         public DateTime CreatedDateTime { get; set; }
     }

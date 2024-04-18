@@ -2,6 +2,7 @@
 using LTAAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LTAAPI.Controllers
@@ -37,6 +38,19 @@ namespace LTAAPI.Controllers
             }
 
             return NotFound();
+        }
+
+        [Route("register")]
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterUser([FromBody] RegisterRequestModel model)
+        {
+            Boolean result = await _authRepository.UserRegistation(model);
+            if (result)
+                return Ok(new { Result = true });
+            else
+                return StatusCode(500);
         }
 
         [Route("getusers")]
