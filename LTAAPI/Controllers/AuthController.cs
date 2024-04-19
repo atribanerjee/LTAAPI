@@ -43,7 +43,7 @@ namespace LTAAPI.Controllers
         [Route("register")]
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+       
         public async Task<IActionResult> RegisterUser([FromBody] RegisterRequestModel model)
         {
             Boolean result = await _authRepository.UserRegistation(model);
