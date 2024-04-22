@@ -43,22 +43,22 @@ namespace LTAAPI.Controllers
         [Route("register")]
         [HttpPost]
         [AllowAnonymous]
-       
         public async Task<IActionResult> RegisterUser([FromBody] RegisterRequestModel model)
         {
             Boolean result = await _authRepository.UserRegistation(model);
             if (result)
-                return Ok(new { Result = true });
+                return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Success." });
             else
-                return StatusCode(500);
+                return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Duplicate username or emmail." });
         }
 
-        [Route("getusers")]
-        [Authorize]
-        [HttpGet]
-        public async Task<IActionResult> GetUsers()
+        [Route("checkifusernameexists/{username}")]
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> CheckDuplicateUserName(String Username)
         {
-            return Ok();
+            Boolean isExists = await _authRepository.IsExistUserUserName(Username);
+            return Ok(isExists);
         }
 
     }

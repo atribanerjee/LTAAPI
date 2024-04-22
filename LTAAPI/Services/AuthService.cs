@@ -115,6 +115,7 @@ namespace LTAAPI.Services
                         entity.UserName = model.UserName;
                         entity.Password = model.Password;
                         entity.Address = model.Address;
+                        entity.PhoneNo= model.PhoneNo;
                         entity.IsActive = true;
                         entity.CreatedDateTime = DateTime.Now;
 
