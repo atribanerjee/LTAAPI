@@ -52,12 +52,21 @@ namespace LTAAPI.Controllers
                 return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Duplicate username or emmail." });
         }
 
-        [Route("checkifusernameexists/{username}")]
-        [HttpPost]
+        [Route("checkifusernameexists{username}")]
+        [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> CheckDuplicateUserName(String Username)
+        public async Task<IActionResult> CheckDuplicateUserName(String username)
         {
-            Boolean isExists = await _authRepository.IsExistUserUserName(Username);
+            Boolean isExists = await _authRepository.IsExistUserUserName(username);
+            return Ok(isExists);
+        }
+
+        [Route("checkifemailexists{email}")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> CheckDuplicateEmail(String email)
+        {
+            Boolean isExists = await _authRepository.IsExistUserEmail(email);
             return Ok(isExists);
         }
 
