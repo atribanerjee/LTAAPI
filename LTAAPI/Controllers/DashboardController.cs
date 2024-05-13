@@ -71,7 +71,7 @@ namespace LTAAPI.Controllers
                         {
                             client.DefaultRequestHeaders.Clear();
                             client.DefaultRequestHeaders.Authorization =
-                                 new AuthenticationHeaderValue("Bearer", "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");
+                                 new AuthenticationHeaderValue("Bearer", "sk-lta-account-TDVpYUvmiqKcd2WWqIqsT3BlbkFJSIYhIeQVoTpMUNo0JTV3");
                             var Message = await client.
                                   PostAsync("https://api.openai.com/v1/images/generations",
                                   new StringContent(JsonConvert.SerializeObject(input),
@@ -94,7 +94,7 @@ namespace LTAAPI.Controllers
                     {
                         client.DefaultRequestHeaders.Clear();
                         client.DefaultRequestHeaders.Authorization =
-                             new AuthenticationHeaderValue("Bearer", "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");
+                             new AuthenticationHeaderValue("Bearer", "sk-lta-account-TDVpYUvmiqKcd2WWqIqsT3BlbkFJSIYhIeQVoTpMUNo0JTV3");
                         var Message = await client.
                               PostAsync("https://api.openai.com/v1/images/generations",
                               new StringContent(JsonConvert.SerializeObject(input),
@@ -122,7 +122,7 @@ namespace LTAAPI.Controllers
         [Authorize]
         public async Task<string> ChatConv(string inputText)
         {
-            var openai = new OpenAIAPI(new APIAuthentication("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"));
+            var openai = new OpenAIAPI(new APIAuthentication("sk-lta-account-TDVpYUvmiqKcd2WWqIqsT3BlbkFJSIYhIeQVoTpMUNo0JTV3"));
 
             var conversation = openai.Chat.CreateConversation();
             conversation.AppendUserInput(inputText);
