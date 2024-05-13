@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using OpenAI_API;
 using System.Net.Http.Headers;
@@ -14,12 +15,12 @@ namespace LTAAPI.Controllers
     public class DashboardController : Controller
     {
         private readonly IConfiguration _configuration;
-
+        
         public DashboardController(IConfiguration conf)
         {
-            _configuration = conf;
+            _configuration = conf;            
         }
-
+                        
         [Route("generateimage")]
         [HttpPost]
         [Authorize]
@@ -70,8 +71,13 @@ namespace LTAAPI.Controllers
                         using (var client = new HttpClient())
                         {
                             client.DefaultRequestHeaders.Clear();
+                            //----------------------------------------
                             client.DefaultRequestHeaders.Authorization =
-                                 new AuthenticationHeaderValue("Bearer", "sk-lta-account-TDVpYUvmiqKcd2WWqIqsT3BlbkFJSIYhIeQVoTpMUNo0JTV3");
+                                 new AuthenticationHeaderValue("Bearer", _configuration["AICommon:key"]!);
+                            //----------------------------------------
+                            //client.DefaultRequestHeaders.Authorization =
+                            //     new AuthenticationHeaderValue("Bearer", "sk-lta-account-TDVpYUvmiqKcd2WWqIqsT3BlbkFJSIYhIeQVoTpMUNo0JTV3");
+
                             var Message = await client.
                                   PostAsync("https://api.openai.com/v1/images/generations",
                                   new StringContent(JsonConvert.SerializeObject(input),
@@ -93,8 +99,13 @@ namespace LTAAPI.Controllers
                     using (var client = new HttpClient())
                     {
                         client.DefaultRequestHeaders.Clear();
+                        //client.DefaultRequestHeaders.Authorization =
+                        //     new AuthenticationHeaderValue("Bearer", "sk-lta-account-TDVpYUvmiqKcd2WWqIqsT3BlbkFJSIYhIeQVoTpMUNo0JTV3");
+                        //---------------------
                         client.DefaultRequestHeaders.Authorization =
-                             new AuthenticationHeaderValue("Bearer", "sk-lta-account-TDVpYUvmiqKcd2WWqIqsT3BlbkFJSIYhIeQVoTpMUNo0JTV3");
+                             new AuthenticationHeaderValue("Bearer", _configuration["AICommon:key"]!);
+                        //---------------------
+
                         var Message = await client.
                               PostAsync("https://api.openai.com/v1/images/generations",
                               new StringContent(JsonConvert.SerializeObject(input),
@@ -122,7 +133,10 @@ namespace LTAAPI.Controllers
         [Authorize]
         public async Task<string> ChatConv(string inputText)
         {
-            var openai = new OpenAIAPI(new APIAuthentication("sk-lta-account-TDVpYUvmiqKcd2WWqIqsT3BlbkFJSIYhIeQVoTpMUNo0JTV3"));
+            //var openai = new OpenAIAPI(new APIAuthentication("sk-lta-account-TDVpYUvmiqKcd2WWqIqsT3BlbkFJSIYhIeQVoTpMUNo0JTV3"));
+            //----------------------------            
+            var openai = new OpenAIAPI(new APIAuthentication(_configuration["AICommon:key"]!));
+            //--------------------------
 
             var conversation = openai.Chat.CreateConversation();
             conversation.AppendUserInput(inputText);
