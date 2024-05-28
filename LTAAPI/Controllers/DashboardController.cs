@@ -30,7 +30,7 @@ namespace LTAAPI.Controllers
             input.n = model.quantity ;
             input.size = model.imagesize;
 
-            string prompt = "Create a simple sentence in English about apples. ";
+            string prompt = "Create a simple sentence in English about rockets. ";
             prompt = prompt + "create one wordlist for each word in the sentence. a Wordlist consists of syntactically similar words including the original. ";
             //prompt = prompt + "For each wordlist put brackets around the wordlist, use single quotes around each word. ";
             prompt = prompt + "For each wordlist add into a json. ";
