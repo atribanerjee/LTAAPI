@@ -5,7 +5,8 @@
     }
     public class LoginModel
     {
-        public required String UserName { get; set; }
+        //public required String UserName { get; set; }
+        public required String Email { get; set; }
         public required String Password { get; set; }
 
     }

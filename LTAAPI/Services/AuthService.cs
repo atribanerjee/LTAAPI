@@ -77,10 +77,10 @@ namespace LTAAPI.Services
             UsersModel? ReturnModel = new UsersModel();
             try
             {
-                if (loginModel != null && !String.IsNullOrEmpty(loginModel.UserName) && !String.IsNullOrEmpty(loginModel.Password))
+                if (loginModel != null && !String.IsNullOrEmpty(loginModel.Email) && !String.IsNullOrEmpty(loginModel.Password))
                 {
                     ReturnModel = await (from u in _context.Users
-                                         where u.UserName == loginModel.UserName
+                                         where u.Email == loginModel.Email
                                          && u.Password == loginModel.Password
                                          select new UsersModel
                                          {
