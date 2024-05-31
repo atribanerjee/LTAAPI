@@ -33,7 +33,8 @@ namespace LTAAPI.Controllers
                 {
                     String token = _jWTRepository.GenerateJWTToken(res);
 
-                    return Ok(new { Result = true, Token = "Bearer " + token });
+                    //return Ok(new { Result = true, Token = "Bearer " + token });
+                    return Ok(new { Result = true, Token = token });
                 }
             }
 
