@@ -2,6 +2,7 @@ using LTAAPI.Interfaces;
 using LTAAPI.Services;
 using LTADB;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -89,3 +90,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
