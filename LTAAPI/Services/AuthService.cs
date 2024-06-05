@@ -78,36 +78,13 @@ namespace LTAAPI.Services
             return false;
         }
 
-        
-        //-------------------------------
-        
-        //public string Encrypt(string clearText)
-        //{
-        //    byte[] clearBytes = Encoding.Unicode.GetBytes(clearText);
-        //    using (Aes encryptor = Aes.Create())
-        //    {
-        //        Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes("true", new byte[] { 0x65, 0x3d, 0x54, 0x9d, 0x76, 0x49, 0x76, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x61 });
-        //        encryptor.Key = pdb.GetBytes(32);
-        //        encryptor.IV = pdb.GetBytes(16);
-        //        using (MemoryStream ms = new MemoryStream())
-        //        {
-        //            using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
-        //            {
-        //                cs.Write(clearBytes, 0, clearBytes.Length);
-        //                cs.Close();
-        //            }
-        //            clearText = Convert.ToBase64String(ms.ToArray());
-        //        }
-        //    }
-        //    return clearText;
-        //}
 
         //--------------------------------
         public async Task<UsersModel> UserLogin(LoginModel loginModel)
         {
             UsersModel? ReturnModel = new UsersModel();
             try
-            {                
+            {
                 if (loginModel != null && !String.IsNullOrEmpty(loginModel.Email) && !String.IsNullOrEmpty(loginModel.Password))
                 {
                     //---------------------------------------------
@@ -122,7 +99,7 @@ namespace LTAAPI.Services
                             //--------------------------------------------
                             ReturnModel = await (from u in _context.Users
                                                  where u.Email == loginModel.Email
-                                                 && u.Password == hashedPasswordFromDatabase //loginModel.Password
+                                                 && u.Password == hashedPasswordFromDatabase
                                                  select new UsersModel
                                                  {
                                                      ID = u.ID,
@@ -136,7 +113,7 @@ namespace LTAAPI.Services
             }
             catch (Exception Ex)
             {
-                
+
             }
 
             return ReturnModel;
@@ -144,12 +121,12 @@ namespace LTAAPI.Services
 
         public async Task<Boolean> UserRegistation(RegisterRequestModel model)
         {
-            
+
             try
             {
                 //----------------------------------
                 //var hashedPassword = Encrypt(model.Password);
-                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);                
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
                 //-----------------------------------
                 if (model != null && !String.IsNullOrEmpty(model.UserName) && !String.IsNullOrEmpty(model.Password) && !String.IsNullOrEmpty(model.Email))
                 {
@@ -164,7 +141,7 @@ namespace LTAAPI.Services
                         //entity.Password = model.Password;
                         entity.Password = hashedPassword;
                         entity.Address = model.Address;
-                        entity.PhoneNo= model.PhoneNo;
+                        entity.PhoneNo = model.PhoneNo;
                         entity.IsActive = true;
                         entity.CreatedDateTime = DateTime.Now;
 
