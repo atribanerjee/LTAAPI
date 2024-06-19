@@ -34,7 +34,7 @@ namespace LTAAPI.Controllers
             prompt += "For each wordlist add into a json. ";
             prompt += "put all the wordlists into one json list [] brackets around the whole list";
             prompt += "As an example: for the sentence \"The rocket launched to the moon\" consider the following example structure";
-            prompt += "Here is an example structure [{\"text\": \"The rocket\",\"options\": [{ \"id\": 1,\"text\": \"launched\"},{\"id\": 2,\"text\": \"played\"}],\"optionid\": 1},{\"text\": \"to the\",\"options\": [{\"id\": 1,\"text\": \"potato\"},{\"id\": 2,\"text\": \"moon\"}],\"optionid\": 2}]";
+            prompt += "Here is an example structure [[{\"text\": \"The rocket\",\"options\": [{ \"id\": 1,\"text\": \"launched\"},{\"id\": 2,\"text\": \"played\"}],\"optionid\": 1}],[{\"text\": \"to the\",\"options\": [{\"id\": 1,\"text\": \"potato\"},{\"id\": 2,\"text\": \"moon\"}],\"optionid\": 2}]]";
 
 
             prompt = prompt + " Only return the structure without other comments";
@@ -47,7 +47,7 @@ namespace LTAAPI.Controllers
 
                 if (!string.IsNullOrEmpty(Phrase))
                 {
-                    List<Scenario1ViewModel> myDeserializedClass = JsonConvert.DeserializeObject<List<Scenario1ViewModel>>(Phrase);
+                    List<List<Scenario1ViewModel>> myDeserializedClass = JsonConvert.DeserializeObject<List<List<Scenario1ViewModel>>>(Phrase);
 
                     return Json(myDeserializedClass);
                 }
