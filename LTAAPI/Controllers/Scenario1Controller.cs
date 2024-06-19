@@ -47,9 +47,6 @@ namespace LTAAPI.Controllers
 
                 if (!string.IsNullOrEmpty(Phrase))
                 {
-                    dynamic myDeserializedClass = JsonConvert.DeserializeObject(Phrase);
-                    
-
                     return Json(Phrase);
                 }
             }
