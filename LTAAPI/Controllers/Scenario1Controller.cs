@@ -20,7 +20,7 @@ namespace LTAAPI.Controllers
             _configuration = conf;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         [Route("generateimage")]
         public async Task<IActionResult> GenerateImage()
