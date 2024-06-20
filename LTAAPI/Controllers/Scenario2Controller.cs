@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using OpenAI_API;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace LTAAPI.Controllers
 {
@@ -25,7 +27,7 @@ namespace LTAAPI.Controllers
         public async Task<JsonResult> GenerateImage()
         {
 
-            string prompt = "Select an office object and drop in an appropriate box about office. ";
+            string prompt = "Drag an office object and drop in an appropriate box. ";
 
             prompt += "For each blank options create wordlist. ";
             prompt += "Also add answer key id. ";
@@ -34,7 +36,7 @@ namespace LTAAPI.Controllers
             //prompt += "As an example: for the sentence \"The rocket launched to the moon\" consider the following example structure";
             //prompt += "Here is an example structure [[{\"text\": \"The rocket\"},{\"options\": [{ \"id\": 1,\"text\": \"launched\"},{\"id\": 2,\"text\": \"played\"}],\"optionid\": 1}],[{\"text\": \"to the\"},{\"options\": [{\"id\": 1,\"text\": \"potato\"},{\"id\": 2,\"text\": \"moon\"}],\"optionid\": 2}]]";
 
-            prompt += "Here is an example structure [[{\"text\": \"Drag and drop masculine gender objects\"},{\"options\": [{\"id\": 1,\"text\": \"image1\"},{\"id\": 2,\"text\": \"image2\"},{\"id\": 3,\"text\": \"image3\"},{\"id\": 4,\"text\": \"image4\"}],\"optionid\": 1}],[{\"text\": \"Drag and drop feminine gender objects\"},{\"options\": [{\"id\": 1,\"text\": \"image1\"},{\"id\": 2,\"text\": \"image2\"},{\"id\": 3,\"text\": \"image3\"},{\"id\": 4,\"text\": \"image4\"}],\"optionid\": 2}],[{\"text\": \"Drag and drop neuter gender objects\"},{\"options\": [{\"id\": 1,\"text\": \"image1\"},{\"id\": 2,\"text\": \"image2\"},{\"id\": 3,\"text\": \"image3\"},{\"id\": 4,\"text\": \"image4\"}],\"optionid\": 3}]]";
+            prompt += "Here is an example structure [[{\"text\": \"Drag and drop masculine gender objects\"},{\"options\": [{\"id\": 1,\"item\": \"image1\"},{\"id\": 2,\"item\": \"image2\"},{\"id\": 3,\"item\": \"image3\"},{\"id\": 4,\"item\": \"image4\"}],\"optionid\": 1}],[{\"text\": \"Drag and drop feminine gender objects\"},{\"options\": [{\"id\": 1,\"item\": \"image1\"},{\"id\": 2,\"item\": \"image2\"},{\"id\": 3,\"item\": \"image3\"},{\"id\": 4,\"item\": \"image4\"}],\"optionid\": 2}],[{\"text\": \"Drag and drop neuter gender objects\"},{\"options\": [{\"id\": 1,\"item\": \"image1\"},{\"id\": 2,\"item\": \"image2\"},{\"id\": 3,\"item\": \"image3\"},{\"id\": 4,\"item\": \"image4\"}],\"optionid\": 3}]]";
 
             prompt = prompt + " Only return the structure without other comments";
 
@@ -43,10 +45,12 @@ namespace LTAAPI.Controllers
                 string Phrase = string.Empty;
                 Phrase = await ChatConv(prompt); //("Generate a small sentence in english for standard 1");
 
-                //System.Text.Json.JsonSerializerOptions.Default;
+
 
                 if (!string.IsNullOrEmpty(Phrase))
                 {
+                    Phrase = Phrase.Replace("\n", "").Replace("\r", "").Replace("\t", "");
+                    
                     return Json(Phrase);
                 }
             }
