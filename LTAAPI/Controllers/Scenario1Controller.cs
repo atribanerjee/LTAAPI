@@ -3,6 +3,7 @@ using LTAAPI.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using OpenAI_API;
 using System.Net.Http.Headers;
 using System.Text;
@@ -20,12 +21,12 @@ namespace LTAAPI.Controllers
             _configuration = conf;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet]
         [Route("generateimage")]
         public async Task<IActionResult> GenerateImage()
         {
-
+            string jsonPattern = "[[{\"text\": \"The rocket\"},{\"options\": [{ \"id\": 1,\"text\": \"launched\"},{\"id\": 2,\"text\": \"played\"}],\"optionid\": 1}],[{\"text\": \"to the\"},{\"options\": [{\"id\": 1,\"text\": \"potato\"},{\"id\": 2,\"text\": \"moon\"}],\"optionid\": 2}]]";
 
             string prompt = "Create 10 simple sentences in English about space, rockets, artriods, moon, star, etc. ";
             
@@ -34,7 +35,7 @@ namespace LTAAPI.Controllers
             prompt += "For each wordlist add into a json. ";
             //prompt += "put all the wordlists into one json list [] brackets around the whole list";
             //prompt += "As an example: for the sentence \"The rocket launched to the moon\" consider the following example structure";
-            prompt += "Here is an example structure [[{\"text\": \"The rocket\"},{\"options\": [{ \"id\": 1,\"text\": \"launched\"},{\"id\": 2,\"text\": \"played\"}],\"optionid\": 1}],[{\"text\": \"to the\"},{\"options\": [{\"id\": 1,\"text\": \"potato\"},{\"id\": 2,\"text\": \"moon\"}],\"optionid\": 2}]]";
+            prompt += "Here is an example structure "+ jsonPattern;
 
 
             prompt = prompt + " Only return the structure without other comments";
@@ -44,7 +45,7 @@ namespace LTAAPI.Controllers
                 string Phrase = string.Empty;
                 Phrase = await ChatConv(prompt); //("Generate a small sentence in english for standard 1");
 
-
+                
                 if (!string.IsNullOrEmpty(Phrase))
                 {
                     return Json(Phrase);
