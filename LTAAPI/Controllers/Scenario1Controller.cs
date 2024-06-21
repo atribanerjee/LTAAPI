@@ -20,16 +20,16 @@ namespace LTAAPI.Controllers
             _configuration = conf;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         [Route("generateimage")]
         public async Task<IActionResult> GenerateImage()
         {
 
 
-            string prompt = "Create fill in the blanks on a simple sentence in English about rockets. ";
+            string prompt = "Create 10 simple sentences in English about space, rockets, artriods, moon, star, etc. ";
             
-            prompt += "For each blank options create wordlist. ";
+            prompt += "For each blank options create 2, 3 or 4 wordlist. ";
             prompt += "Also add answer key id. ";
             prompt += "For each wordlist add into a json. ";
             //prompt += "put all the wordlists into one json list [] brackets around the whole list";
