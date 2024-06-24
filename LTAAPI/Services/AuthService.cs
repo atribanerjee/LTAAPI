@@ -196,11 +196,12 @@ namespace LTAAPI.Services
             bool result = false;
             try
             {
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
                 var user = await _context.Users.Where(x => x.ID == id).FirstOrDefaultAsync();
 
                 if (user != null && user.ID > 0)
                 {
-                    user.Password = password;
+                    user.Password = hashedPassword;
                     user.IsTokenValid = false;
 
                     _context.Users.Update(user);
