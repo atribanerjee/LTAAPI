@@ -10,5 +10,6 @@ namespace LTAAPI.Interfaces
         Task<Boolean> IsExistUserUserName(String Username);
         Task<Boolean> IsExistUserNameAndEmail(String Username, String Email);
         Task<UsersModel> CheckTokenValidation(ResetPasswordModel model);
+        Task<bool> UpdatePassword(int id, string password);
     }
 }

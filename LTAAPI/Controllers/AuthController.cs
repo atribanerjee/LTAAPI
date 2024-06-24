@@ -109,11 +109,22 @@ namespace LTAAPI.Controllers
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
         {
             var user = _authRepository.CheckTokenValidation(model);
-            if()
+            if(user!=null && user.Id>0)
             {
-                await _authRepository.UpdatePassword()
+                if (await _authRepository.UpdatePassword(user.Id, model.Password))
+                {
+                    //await _authRepository.SendResetPasswordConfirmationEmail(user.Email);
+                    return Ok("Password updated successfully.");
+                }
+                else
+                {
+                    return StatusCode(500, "Password updation failed.");
+                }
             }
-            return Ok(isExists);
+            else
+            {
+                return StatusCode(500, "Invalid token.");
+            }
         }
     }
 }

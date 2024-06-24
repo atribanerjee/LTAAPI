@@ -100,6 +100,7 @@ namespace LTAAPI.Services
                             ReturnModel = await (from u in _context.Users
                                                  where u.Email == loginModel.Email
                                                  && u.Password == hashedPasswordFromDatabase
+                                                 && u.IsActive
                                                  select new UsersModel
                                                  {
                                                      ID = u.ID,
@@ -143,7 +144,7 @@ namespace LTAAPI.Services
                         entity.Address = model.Address;
                         entity.PhoneNo = model.PhoneNo;
                         entity.IsActive = true;
-                        entity.CreatedDateTime = DateTime.Now;
+                        entity.CreatedDateTime = DateTime.UtcNow;
 
                         await _context.Users.AddAsync(entity);
                         await _context.SaveChangesAsync();
@@ -156,6 +157,60 @@ namespace LTAAPI.Services
             {
             }
             return false;
+        }
+
+        public async Task<UsersModel> CheckTokenValidation(ResetPasswordModel model)
+        {
+            UsersModel? ReturnModel = new UsersModel();
+            try
+            {
+                ReturnModel = await (from u in _context.Users
+                                 where u.ResetPasswordToken == model.ResetPasswordToken
+                                 && u.IsTokenValid
+                                 && u.IsActive
+                                 
+                                 select new UsersModel
+                                 {
+                                     ID = u.ID,
+                                     UserName = u.UserName,
+                                     Email = u.Email,
+                                     FirstName = u.FirstName,
+                                     LastName = u.LastName,
+                                     PhoneNo = u.PhoneNo,
+                                     Address = u.Address
+                                 }).FirstOrDefaultAsync();               
+            }
+            catch (Exception ex)
+            {
+
+
+            }
+            return ReturnModel;
+        }
+
+        public async Task<bool> UpdatePassword(int id, string password)
+        {
+            bool result = false;
+            try
+            {
+                var user = await _context.Users.Where(x => x.ID == id).FirstOrDefaultAsync();
+
+                if (user != null && user.ID > 0)
+                {
+                    user.Password = password;
+                    user.IsTokenValid = false;
+
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+
+
+            }
+            return result;
         }
     }
 }
