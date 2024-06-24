@@ -18,8 +18,8 @@
     public class LogInViewModel
     {
         public required String emailid { get; set; }
-        public required String Password { get; set; }
-        public DateTime createdate { get; set; }
+        //public required String Password { get; set; }
+        //public DateTime createdate { get; set; }
 
     }
 

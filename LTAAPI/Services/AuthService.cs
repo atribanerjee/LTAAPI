@@ -13,6 +13,7 @@ using System.Net.Mail;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace LTAAPI.Services
 {
@@ -228,6 +229,7 @@ namespace LTAAPI.Services
         public String ReadHtmlFile(Dictionary<String, String> obj, string htmlMessage, string email)
         {
             String content = String.Empty;
+            String _content = String.Empty;
             String TemplatePath = htmlMessage;
             try
             {
@@ -235,15 +237,17 @@ namespace LTAAPI.Services
                 using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
                 {
                     content = streamReader.ReadToEnd();
+                    _content = content
+                    .Replace("@User", email)
+                    .Replace("@URL", "http://localhost:4200/sign-in/");
                 }
-                content = content.Replace("@@@User@@", email);
-                content = content.Replace("@@@URL@@", "https://localhost:7207/");
+                 
 
-                obj.Add("OrganizationMainSite", "Test");
-                obj.Add("OrganizationName", "Test1");
-                obj.Add("OrganizationLogo", "Test2");
-                obj.Add("OrgSupportEmail", "Test3");
-                obj.Add("OrgAddress", "Test4");
+                //obj.Add("OrganizationMainSite", "Test");
+                //obj.Add("OrganizationName", "Test1");
+                //obj.Add("OrganizationLogo", "Test2");
+                //obj.Add("OrgSupportEmail", "Test3");
+                //obj.Add("OrgAddress", "Test4");
 
                 //foreach (KeyValuePair<String, String> kv in obj)
                 //{
@@ -258,7 +262,7 @@ namespace LTAAPI.Services
                 throw Ex;
             }
 
-            return content;
+            return _content;
         }
 
 
