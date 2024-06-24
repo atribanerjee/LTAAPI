@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Net.Mail;
 using static LTAAPI.Services.AuthService;
 
 namespace LTAAPI.Controllers
@@ -17,10 +18,12 @@ namespace LTAAPI.Controllers
         private readonly IAuthRepository _authRepository;
         private readonly IJWTRepository _jWTRepository;
         //private readonly PasswordService _passwordService;
-        public AuthController(IAuthRepository authRepository, IJWTRepository jWTRepository) //, PasswordService passwordService)
+        private IConfiguration _Configuration;
+        public AuthController(IAuthRepository authRepository, IJWTRepository jWTRepository, IConfiguration config) //, PasswordService passwordService)
         {
             _authRepository = authRepository;
             _jWTRepository = jWTRepository;
+            _Configuration = config;
             //this._passwordService = passwordService;
         }
 
@@ -44,6 +47,84 @@ namespace LTAAPI.Controllers
 
             return NotFound();
         }
+        //-------------------------------
+
+        [Route("forgotPassword")]
+        [AllowAnonymous]
+        [HttpPost]
+        //public async Task<IActionResult> ForgotPassword([FromBody] ForGotModel model)
+        //{
+        //    Guid g = Guid.NewGuid();
+        //    if (ModelState.IsValid)
+        //    {
+        //        var res = await _authRepository.ForgotPassword(model);
+        //        //var res = await _authRepository.IsExistUserEmail(model);
+        //        if (res != null && res.ID > 0)
+        //        {
+        //            String token = _jWTRepository.GenerateJWTToken(res);
+
+        //            //return Ok(new { Result = true, Token = "Bearer " + token });
+        //            return Ok(new { Result = true, Token = token });
+        //        }
+        //    }
+
+        //    return NotFound();
+        //}
+        
+        //--------------------------------
+        //[HttpPost]
+        public async Task<IActionResult> ForgetPassword([FromForm] LogInViewModel model)
+        {
+            //LogInViewModel lvm = new LogInViewModel();
+
+            UsersModel? ReturnModel = new UsersModel();
+
+            if (!string.IsNullOrEmpty(model.emailid.ToString()))
+            {
+                ReturnModel = _authRepository.CheckEmailIDExit(model.emailid.ToString());
+
+                if (ReturnModel != null)
+                // if (!string.IsNullOrEmpty(lvm.ToString()))
+                {
+                    Guid guid = Guid.NewGuid();
+
+                    Dictionary<string, string> objDict = new Dictionary<string, string>();
+                    objDict.Add("emailid", ReturnModel.Email);
+                    objDict.Add("Year", DateTime.Now.Year.ToString());
+                    //objDict.Add("VerificationCode", guid.ToString());
+
+                    objDict.Add("ActivationUrl", _Configuration["MailHelperSettings:BaseURl"] + "Controllers/Auth/" + guid);
+                    var SendmailResult = await _authRepository.SendEmailAsync("Reset Password Requested", model.emailid, "welcome.html", ReturnModel.FirstName, objDict);
+                    if (SendmailResult)
+                    {
+                        TempData["SuccessMessage"] = "A One Time Password (OTP) has been sent to your registered email. Please check your email.";
+                    }
+                    else
+                    {
+                        TempData["SuccessMessage"] = "Mail sending fail";
+                    }
+
+                    bool Saveguidornot = _authRepository.SaveGuid(guid.ToString(), ReturnModel.Email);
+                    TempData["IsShowVerification"] = "true";
+                    ViewBag.SuccessMessage = "A One Time Password (OTP) has been sent to your registered email. Please check your email.";
+                    return RedirectToAction("LogIn", "Auth");
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Email does not exists";
+                }
+
+                //objDict.Add("ActivationUrl", dbConn + "Account/ResetPassword?Token=" + UVM.GuID);
+            }
+
+            return RedirectToAction("Login", "Auth");
+        }
+        
+
+
+        //---------------------------------------------
+
+
 
         [Route("register")]
         [HttpPost]
@@ -67,6 +148,7 @@ namespace LTAAPI.Controllers
             return Ok(isExists);
         }
 
+
         [Route("checkifemailexists{email}")]
         [HttpGet]
         [AllowAnonymous]
@@ -75,6 +157,8 @@ namespace LTAAPI.Controllers
             Boolean isExists = await _authRepository.IsExistUserEmail(email);
             return Ok(isExists);
         }
+
+
         //-----------------------------------
         //private readonly PasswordService _passwordService;
 

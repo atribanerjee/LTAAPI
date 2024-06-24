@@ -47,6 +47,8 @@ namespace LTAAPI.Controllers
 
                 if (!string.IsNullOrEmpty(Phrase))
                 {
+                    //Phrase = Phrase.Trim();
+                    Phrase = Phrase.Replace("\n", "").Replace("\r", "").Replace("\t", "");
                     return Json(Phrase);
                 }
             }
