@@ -213,7 +213,7 @@ namespace LTAAPI.Services
             var subject1 = "Sending with Twilio SendGrid is Fun";
             var to_email = new EmailAddress(email);
             var plainTextContent = "and easy to do anywhere, even with C#";
-            var htmlContent = ReadHtmlFile(objDict, htmlMessage);
+            var htmlContent = ReadHtmlFile(objDict, htmlMessage, email);
             //var htmlContent = "htmlMessage";
             var msg = MailHelper.CreateSingleEmail(from_email, to_email, subject1, plainTextContent, htmlContent);
             var response = await client.SendEmailAsync(msg).ConfigureAwait(false);
@@ -225,7 +225,7 @@ namespace LTAAPI.Services
             return Result;
         }
 
-        public String ReadHtmlFile(Dictionary<String, String> obj, string htmlMessage)
+        public String ReadHtmlFile(Dictionary<String, String> obj, string htmlMessage, string email)
         {
             String content = String.Empty;
             String TemplatePath = htmlMessage;
@@ -236,6 +236,8 @@ namespace LTAAPI.Services
                 {
                     content = streamReader.ReadToEnd();
                 }
+                content = content.Replace("@@@User@@", email);
+                content = content.Replace("@@@URL@@", "https://localhost:7207/");
 
                 obj.Add("OrganizationMainSite", "Test");
                 obj.Add("OrganizationName", "Test1");
@@ -243,10 +245,12 @@ namespace LTAAPI.Services
                 obj.Add("OrgSupportEmail", "Test3");
                 obj.Add("OrgAddress", "Test4");
 
-                foreach (KeyValuePair<String, String> kv in obj)
-                {
-                    content = content.Replace("@@" + kv.Key + "@@", kv.Value);
-                }
+                //foreach (KeyValuePair<String, String> kv in obj)
+                //{
+                //    content = content.Replace("@@" + kv.Key + "@@", kv.Value);
+                //    content = content.Replace("@@@User@@" + kv.Key + "@@", kv.Value);
+
+                //}
             }
 
             catch (Exception Ex)
