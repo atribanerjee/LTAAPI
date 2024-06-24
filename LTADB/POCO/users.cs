@@ -22,5 +22,7 @@ namespace LTADB.POCO
         public String? Address { get; set; }
         public Boolean IsActive { get; set; }
         public DateTime CreatedDateTime { get; set; }
+        public Guid ResetPasswordToken { get; set; }
+        public DateTime TokenValidity { get; set; }
     }
 }
