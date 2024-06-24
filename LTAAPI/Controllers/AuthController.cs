@@ -103,5 +103,17 @@ namespace LTAAPI.Controllers
         //}
 
         //------------------------------------
+
+        [HttpPost("resetpassword")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordModel model)
+        {
+            var user = _authRepository.CheckTokenValidation(model);
+            if()
+            {
+                await _authRepository.UpdatePassword()
+            }
+            return Ok(isExists);
+        }
     }
 }

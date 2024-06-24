@@ -24,5 +24,6 @@ namespace LTADB.POCO
         public DateTime CreatedDateTime { get; set; }
         public Guid ResetPasswordToken { get; set; }
         public DateTime TokenValidity { get; set; }
+        public Boolean IsTokenValid { get; set; }
     }
 }
