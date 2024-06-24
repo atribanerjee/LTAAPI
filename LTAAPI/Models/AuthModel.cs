@@ -24,7 +24,7 @@
 
     public class ResetPasswordModel
     {
-        public Guid ResetPasswordToken { get; set; }
+        public String ResetPasswordToken { get; set; }
         public string Password { get; set; }
     }
 }

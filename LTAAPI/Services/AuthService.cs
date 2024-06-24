@@ -161,24 +161,27 @@ namespace LTAAPI.Services
 
         public async Task<UsersModel> CheckTokenValidation(ResetPasswordModel model)
         {
+
+            
             UsersModel? ReturnModel = new UsersModel();
             try
             {
+
                 ReturnModel = await (from u in _context.Users
-                                 where u.ResetPasswordToken == model.ResetPasswordToken
-                                 && u.IsTokenValid
-                                 && u.IsActive
-                                 
-                                 select new UsersModel
-                                 {
-                                     ID = u.ID,
-                                     UserName = u.UserName,
-                                     Email = u.Email,
-                                     FirstName = u.FirstName,
-                                     LastName = u.LastName,
-                                     PhoneNo = u.PhoneNo,
-                                     Address = u.Address
-                                 }).FirstOrDefaultAsync();               
+                                     where u.ResetPasswordToken == model.ResetPasswordToken
+                                     && u.IsTokenValid
+                                     && u.IsActive
+
+                                     select new UsersModel
+                                     {
+                                         ID = u.ID,
+                                         UserName = u.UserName,
+                                         Email = u.Email,
+                                         FirstName = u.FirstName,
+                                         LastName = u.LastName,
+                                         PhoneNo = u.PhoneNo,
+                                         Address = u.Address
+                                     }).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {
@@ -188,7 +191,7 @@ namespace LTAAPI.Services
             return ReturnModel;
         }
 
-        public async Task<bool> UpdatePassword(int id, string password)
+        public async Task<bool> UpdatePassword(Int64 id, string password)
         {
             bool result = false;
             try
