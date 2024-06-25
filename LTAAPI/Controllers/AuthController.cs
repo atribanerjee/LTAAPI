@@ -151,20 +151,18 @@ namespace LTAAPI.Controllers
 
                 if (await _authRepository.UpdatePassword(ID, model.Password))
                 {
-                    //await _authRepository.SendResetPasswordConfirmationEmail(user.Email);                    
                     Dictionary<string, string> objDict = new Dictionary<string, string>();
                     objDict.Add("User", user.FirstName);
-                    objDict.Add("Year", DateTime.UtcNow.AddYears(1).Year.ToString());                    
+                    objDict.Add("Year", DateTime.UtcNow.AddYears(1).Year.ToString());
 
                     if (await _authRepository.SendEmailAsync("LTA (Support) : Reset Password Confirmation", user.Email, "PasswordUpdatedConfirmation.html", objDict))
                     {
-                        return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Reset password Confirmation email sent successfully." });
+                        return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Reset password confirmation email sent successfully." });
                     }
                     else
                     {
-                        return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Reset password Confirmation email sending failed." });
+                        return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Password updated but, reset password confirmation email sending failed." });
                     }
-                    //return Ok("Password updated successfully.");
                 }
                 else
                 {
