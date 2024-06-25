@@ -150,8 +150,7 @@ namespace LTAAPI.Controllers
                     ID = user.ID;
 
                 if (await _authRepository.UpdatePassword(ID, model.Password))
-                {
-                    //await _authRepository.SendResetPasswordConfirmationEmail(user.Email);                    
+                {                                     
                     Dictionary<string, string> objDict = new Dictionary<string, string>();
                     objDict.Add("User", user.FirstName);
                     objDict.Add("Year", DateTime.UtcNow.AddYears(1).Year.ToString());                    
@@ -163,8 +162,7 @@ namespace LTAAPI.Controllers
                     else
                     {
                         return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Reset password Confirmation email sending failed." });
-                    }
-                    //return Ok("Password updated successfully.");
+                    }                   
                 }
                 else
                 {
