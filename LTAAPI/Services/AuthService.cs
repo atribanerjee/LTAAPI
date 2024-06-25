@@ -85,8 +85,6 @@ namespace LTAAPI.Services
             return false;
         }
 
-
-        //--------------------------------
         public async Task<UsersModel> UserLogin(LoginModel loginModel)
         {
             UsersModel? ReturnModel = new UsersModel();
@@ -94,7 +92,6 @@ namespace LTAAPI.Services
             {
                 if (loginModel != null && !String.IsNullOrEmpty(loginModel.Email) && !String.IsNullOrEmpty(loginModel.Password))
                 {
-                    //---------------------------------------------
 
                     var user = _context.Users.FirstOrDefault(u => u.Email == loginModel.Email);
                     if (user != null && !string.IsNullOrEmpty(user.Password))
@@ -103,7 +100,7 @@ namespace LTAAPI.Services
                         bool passwordMatches = BCrypt.Net.BCrypt.Verify(loginModel.Password, hashedPasswordFromDatabase);
                         if (passwordMatches)
                         {
-                            //--------------------------------------------
+
                             ReturnModel = await (from u in _context.Users
                                                  where u.Email == loginModel.Email
                                                  && u.Password == hashedPasswordFromDatabase
@@ -127,77 +124,25 @@ namespace LTAAPI.Services
             return ReturnModel;
         }
 
-        //--------------------------------
-        public async Task<UsersModel> ForgotPassword(ForGotModel forgotModel)
+        public async Task<UsersModel> CheckEmailExits(string EmailID)
         {
             UsersModel? ReturnModel = new UsersModel();
-            try
-            {
-                if (forgotModel != null && !String.IsNullOrEmpty(forgotModel.Email))
-                {
-                    //---------------------------------------------
 
-                    var user = _context.Users.FirstOrDefault(u => u.Email == forgotModel.Email);
-                    if (user != null && !string.IsNullOrEmpty(user.Password))
-                    {
-                        //string hashedPasswordFromDatabase = user.Password;
-                        //bool passwordMatches = BCrypt.Net.BCrypt.Verify(forgotModel.Password, hashedPasswordFromDatabase);
-                        //if (passwordMatches)
-                        //{
-                            //--------------------------------------------
-                            ReturnModel = await (from u in _context.Users
-                                                 where u.Email == forgotModel.Email
-                                                 //&& u.Password == hashedPasswordFromDatabase
-                                                 select new UsersModel
-                                                 {
-                                                     ID = u.ID,
-                                                     UserName = u.UserName,
-                                                     Email = u.Email
-
-                                                 }).FirstOrDefaultAsync();
-                       // }
-                    }
-                }
-            }
-            catch (Exception Ex)
-            {
-
-            }
-
-            return ReturnModel;
-        }
-
-        //-----------------------------
-        public UsersModel CheckEmailIDExit(string EmailID)
-        {
-            // LogInViewModel UVM = new LogInViewModel();
-            UsersModel? ReturnModel = new UsersModel();
-
-            bool result = false;
             try
             {
 
-                {
-
-                    ReturnModel = (from u in _context.Users
-                           where u.Email.ToLower() == EmailID.Trim().ToLower() //&& !u.isdeleted
-                           select new UsersModel
-                           {
-                               ID = u.ID,
-                               UserName = u.UserName,
-                               Email = u.Email
-
-                           }).FirstOrDefault();
-
-                    if (ReturnModel != null)
-                    {
-                        result = true;
-                    }
-                }
-
+                ReturnModel = await (from u in _context.Users
+                                     where u.Email.Trim().ToLower() == EmailID.Trim().ToLower() && u.IsActive
+                                     select new UsersModel
+                                     {
+                                         ID = u.ID,
+                                         UserName = u.UserName,
+                                         FirstName = u.FirstName,
+                                         LastName = u.LastName,
+                                         Email = u.Email
+                                     }).FirstOrDefaultAsync();
 
             }
-
             catch (Exception Ex)
             {
 
@@ -205,125 +150,84 @@ namespace LTAAPI.Services
             return ReturnModel;
         }
 
-        public async Task<bool> SendEmailAsync(string subject, string email, string htmlMessage, String name, Dictionary<string, string> objDict)
+        public async Task<bool> SendEmailAsync(string subject, string ToEmail, string htmlFilename, Dictionary<string, string> objDict)
         {
             bool Result = false;
-            //  var apiKey = _Configuration["EmailSettings:ApiKey"];
-            var client = new SendGridClient(_Configuration["EmailSettings:ApiKey"]);
-            // var from_email = new emailaddress("amit.chakraborty@baseclass.co.in", "Example User");
-            var from_email = new EmailAddress(_Configuration["EmailSettings:SenderEmail"], "Example User");
-            var subject1 = "Sending with Twilio SendGrid is Fun";
-            var to_email = new EmailAddress(email);
-            var plainTextContent = "and easy to do anywhere, even with C#";
-            var htmlContent = ReadHtmlFile(objDict, htmlMessage, email);
-            //var htmlContent = "htmlMessage";
-            var msg = MailHelper.CreateSingleEmail(from_email, to_email, subject1, plainTextContent, htmlContent);
-            var response = await client.SendEmailAsync(msg).ConfigureAwait(false);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                Result = true;
+                var client = new SendGridClient(_Configuration["EmailSettings:ApiKey"]);
+                var from_email = new EmailAddress(_Configuration["EmailSettings:SenderEmail"], _Configuration["EmailSettings:SenderName"]);
+
+                var to_email = new EmailAddress(ToEmail);
+
+                var htmlContent = ReadHtmlFile(objDict, htmlFilename);
+
+                var msg = MailHelper.CreateSingleEmail(from_email, to_email, subject, "", htmlContent);
+                var response = await client.SendEmailAsync(msg).ConfigureAwait(false);
+                if (response.IsSuccessStatusCode)
+                {
+                    Result = true;
+                }
+            }
+            catch (Exception)
+            {
+
             }
 
             return Result;
         }
 
-        public String ReadHtmlFile(Dictionary<String, String> obj, string htmlMessage, string email)
+        public String ReadHtmlFile(Dictionary<String, String> obj, string htmlFilename)
         {
             String content = String.Empty;
-            String _content = String.Empty;
-            String TemplatePath = htmlMessage;
+
             try
             {
-                var fileStream = new FileStream(Path.Combine(_Configuration["MailHelperSettings:MailTemplatePath"], TemplatePath), FileMode.Open, FileAccess.Read);
+                var fileStream = new FileStream(Path.Combine(_Configuration["MailHelperSettings:MailTemplatePath"], htmlFilename), FileMode.Open, FileAccess.Read);
                 using (var streamReader = new StreamReader(fileStream, Encoding.UTF8))
                 {
                     content = streamReader.ReadToEnd();
-                    _content = content
-                    .Replace("@User", email)
-                    .Replace("@URL", "http://localhost:4200/sign-in/");
                 }
-                 
 
-                //obj.Add("OrganizationMainSite", "Test");
-                //obj.Add("OrganizationName", "Test1");
-                //obj.Add("OrganizationLogo", "Test2");
-                //obj.Add("OrgSupportEmail", "Test3");
-                //obj.Add("OrgAddress", "Test4");
 
-                //foreach (KeyValuePair<String, String> kv in obj)
-                //{
-                //    content = content.Replace("@@" + kv.Key + "@@", kv.Value);
-                //    content = content.Replace("@@@User@@" + kv.Key + "@@", kv.Value);
-
-                //}
+                foreach (KeyValuePair<String, String> kv in obj)
+                {
+                    content = content.Replace("@@" + kv.Key + "@@", kv.Value);
+                }
             }
 
             catch (Exception Ex)
             {
-                throw Ex;
+
             }
 
-            return _content;
+            return content;
         }
 
-
-        public bool SaveGuid(string guid, string Email) //Int32 id)
+        public async Task<bool> SaveGuid(string guid, string Email)
         {
             bool Result = false;
-            var entity = _context.Users.Where(x => x.Email == Email).FirstOrDefault();
-
-            entity.Email = Email;
-            entity.CreatedDateTime = DateTime.Now;
-            //entity.forgotpasswordguid = guid;
-            //entity.guidcreateddatetime = DateTime.Now;
-            _context.Users.Update(entity);
-            _context.SaveChanges();
-            Result = true;
-            return Result;
-        }
-
-        public async Task<UsersModel> ForgetPassword(ForGotModel forgotModel)
-        //public IActionResult ForgetPassword([FromForm] LogInViewModel model)
-        {
-            UsersModel? ReturnModel = new UsersModel();
             try
             {
-                if (forgotModel != null && !String.IsNullOrEmpty(forgotModel.Email))
-                {
-                    //---------------------------------------------
+                var entity = await _context.Users.Where(x => x.Email.Trim().ToLower() == Email.Trim().ToLower()).FirstOrDefaultAsync();
 
-                    var user = _context.Users.FirstOrDefault(u => u.Email == forgotModel.Email);
-                    if (user != null && !string.IsNullOrEmpty(user.Password))
-                    {
-                        //string hashedPasswordFromDatabase = user.Password;
-                        //bool passwordMatches = BCrypt.Net.BCrypt.Verify(forgotModel.Password, hashedPasswordFromDatabase);
-                        //if (passwordMatches)
-                        //{
-                        //--------------------------------------------
-                        ReturnModel = await(from u in _context.Users
-                                            where u.Email == forgotModel.Email
-                                            //&& u.Password == hashedPasswordFromDatabase
-                                            select new UsersModel
-                                            {
-                                                ID = u.ID,
-                                                UserName = u.UserName,
-                                                Email = u.Email
+                entity.TokenValidity = DateTime.UtcNow.AddMinutes(10);
+                entity.ResetPasswordToken = guid;
+                entity.IsTokenValid = true;
 
-                                            }).FirstOrDefaultAsync();
-                        // }
-                    }
-                }
+                _context.Users.Update(entity);
+                await _context.SaveChangesAsync();
+
+                Result = true;
             }
-            catch (Exception Ex)
+            catch (Exception ex)
             {
 
+
             }
 
-            return ReturnModel;
+            return Result;
         }
-
-        //--------------------------------
-
 
         public async Task<Boolean> UserRegistation(RegisterRequestModel model)
         {
@@ -351,7 +255,7 @@ namespace LTAAPI.Services
                         entity.IsActive = true;
                         entity.CreatedDateTime = DateTime.UtcNow;
 
-                        await _context.Users.AddAsync(entity);                        
+                        await _context.Users.AddAsync(entity);
                         await _context.SaveChangesAsync();
 
                         return true;
@@ -367,7 +271,7 @@ namespace LTAAPI.Services
         public async Task<UsersModel> CheckTokenValidation(ResetPasswordModel model)
         {
 
-            
+
             UsersModel? ReturnModel = new UsersModel();
             try
             {

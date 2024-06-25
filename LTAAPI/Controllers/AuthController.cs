@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System.Net.Mail;
 using static LTAAPI.Services.AuthService;
 
@@ -47,61 +48,58 @@ namespace LTAAPI.Controllers
 
             return NotFound();
         }
-        
+
 
         [Route("forgotPassword")]
         [AllowAnonymous]
-        [HttpPost]        
+        [HttpPost]
         public async Task<IActionResult> ForgetPassword([FromForm] LogInViewModel model)
         {
-            //LogInViewModel lvm = new LogInViewModel();
 
             UsersModel? ReturnModel = new UsersModel();
 
-            if (!string.IsNullOrEmpty(model.emailid.ToString()))
+            if (!string.IsNullOrEmpty(model.emailid))
             {
-                ReturnModel = _authRepository.CheckEmailIDExit(model.emailid.ToString());
+                ReturnModel = await _authRepository.CheckEmailExits(model.emailid);
 
                 if (ReturnModel != null)
-                // if (!string.IsNullOrEmpty(lvm.ToString()))
                 {
                     Guid guid = Guid.NewGuid();
 
-                    Dictionary<string, string> objDict = new Dictionary<string, string>();
-                    objDict.Add("emailid", ReturnModel.Email);
-                    objDict.Add("Year", DateTime.Now.Year.ToString());
-                    //objDict.Add("VerificationCode", guid.ToString());
-
-                    objDict.Add("ActivationUrl", _Configuration["MailHelperSettings:BaseURl"] + "Controllers/Auth/" + guid);
-                    var SendmailResult = await _authRepository.SendEmailAsync("Reset Password Requested", model.emailid, "welcome.html", ReturnModel.FirstName, objDict);
-                    if (SendmailResult)
+                    if (await _authRepository.SaveGuid(guid.ToString(), ReturnModel.Email))
                     {
-                        TempData["SuccessMessage"] = "A One Time Password (OTP) has been sent to your registered email. Please check your email.";
+
+                        Dictionary<string, string> objDict = new Dictionary<string, string>();
+                        objDict.Add("User", ReturnModel.FirstName);
+                        objDict.Add("Year", DateTime.UtcNow.AddYears(1).Year.ToString());
+
+                        objDict.Add("URL", _Configuration["MailHelperSettings:BaseURl"] + "/resetpassword/" + guid);
+
+                        if (await _authRepository.SendEmailAsync("LTA (Support) : Reset Password", ReturnModel.Email, "ForgotPassword.html", objDict))
+                        {
+                            return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Reset password email sent successfully." });
+                        }
+                        else
+                        {
+                            return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Token generated but email sending failed." });
+                        }
                     }
                     else
                     {
-                        TempData["SuccessMessage"] = "Mail sending fail";
+                        return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Token generation is failed." });
                     }
-
-                    bool Saveguidornot = _authRepository.SaveGuid(guid.ToString(), ReturnModel.Email);
-                    TempData["IsShowVerification"] = "true";
-                    ViewBag.SuccessMessage = "A One Time Password (OTP) has been sent to your registered email. Please check your email.";
-                    return RedirectToAction("LogIn", "Auth");
                 }
                 else
                 {
-                    TempData["SuccessMessage"] = "Email does not exists";
+                    return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Invalid email address." });
                 }
-
-                //objDict.Add("ActivationUrl", dbConn + "Account/ResetPassword?Token=" + UVM.GuID);
+            }
+            else
+            {
+                return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Email address required." });
             }
 
-            return RedirectToAction("Login", "Auth");
         }
-        
-
-
-        //---------------------------------------------
 
 
 
@@ -138,34 +136,6 @@ namespace LTAAPI.Controllers
         }
 
 
-        //-----------------------------------
-        //private readonly PasswordService _passwordService;
-
-        //public void UserController(PasswordService passwordService)
-        //{
-        //    _passwordService = passwordService;
-        //}
-
-        //[HttpPost("register")]
-        //public IActionResult Register(string password)
-        //{
-        //    var hashedPassword = _passwordService.HashPassword(password);
-        //    // Save hashedPassword to the database
-        //    return Ok();
-        //}
-
-        //[HttpPost("login")]
-        //public IActionResult Login(string providedPassword, string storedHashedPassword)
-        //{
-        //    var result = _passwordService.VerifyPassword(storedHashedPassword, providedPassword);
-        //    if (result == PasswordVerificationResult.Success)
-        //    {
-        //        return Ok("Password is correct.");
-        //    }
-        //    return Unauthorized("Invalid password.");
-        //}
-
-        //------------------------------------
 
         [HttpPost("resetpassword")]
         [AllowAnonymous]
@@ -185,14 +155,13 @@ namespace LTAAPI.Controllers
                 }
                 else
                 {
-                    return StatusCode(500, "Password updation failed.");
+                    return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Password updation is failed." });
                 }
             }
             else
             {
-                return StatusCode(500, "Invalid token.");
+                return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Invalid token." });
             }
-
         }
     }
 }
