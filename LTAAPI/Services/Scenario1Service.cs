@@ -3,6 +3,9 @@ using LTAAPI.Models;
 using LTADB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
+using LTADB.POCO;
+using System.Collections.Generic;
 
 namespace LTAAPI.Services
 {
@@ -16,9 +19,9 @@ namespace LTAAPI.Services
             _Configuration = conf;
         }
 
-        public async Task<Scenario1Model> GetScenario1()
+        public async Task<List<Scenario1Model>> GetScenario1()
         {
-            Scenario1Model? ReturnModel = new Scenario1Model();
+            List<Scenario1Model>? ReturnModel = new List<Scenario1Model>();
             try
             {
 
@@ -28,7 +31,7 @@ namespace LTAAPI.Services
                                          Id = sc.Id,
                                          JsonText = sc.JsonText
 
-                                     }).FirstOrDefaultAsync();
+                                     }).ToListAsync();
 
             }
             catch (Exception Ex)
@@ -37,6 +40,30 @@ namespace LTAAPI.Services
             }
 
             return ReturnModel;
+        }
+
+        public async Task<bool> SaveScenario1(string jsondata)
+        {
+            bool result = false;
+            try
+            {
+                var entity = new Scenario1();
+                entity.JsonText = jsondata;
+
+                await _context.Scenario1.AddAsync(entity);
+                await _context.SaveChangesAsync();
+
+                result = true;
+
+                return result;
+
+            }
+            catch (Exception ex)
+            {
+
+
+            }
+            return result;
         }
     }
 }

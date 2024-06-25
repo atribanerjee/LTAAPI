@@ -28,7 +28,7 @@ namespace LTAAPI.Controllers
             _scenario1Repository = scenario1Repository;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         [Route("generateimage")]
         public async Task<IActionResult> GenerateImage()
@@ -55,6 +55,8 @@ namespace LTAAPI.Controllers
                 {
                     //Phrase = Phrase.Trim();
                     Phrase = Phrase.Replace("\n", "").Replace("\r", "").Replace("\t", "");
+                    var res = await _scenario1Repository.SaveScenario1(Phrase);
+
                     return Json(Phrase);
                 }
             }
@@ -68,60 +70,21 @@ namespace LTAAPI.Controllers
 
         //[Authorize]
         [HttpGet]
-        [Route("generateimage2")]
-        public async Task<IActionResult> GenerateImage2()
+        [Route("Generaterandomimage")]
+        public async Task<IActionResult> GenerateRandomimage()
         {
-
             try
             {
-                string prompt = "Create 10 simple sentences in English about space, rockets, artriods, moon, star, etc. ";
+                var EntityListScenario1 = await _scenario1Repository.GetScenario1();
 
-                prompt += "For each blank options create 2, 3 or 4 wordlist. ";
-                prompt += "Also add answer key id. ";
-                prompt += "For each wordlist add into a json. ";
-                //prompt += "put all the wordlists into one json list [] brackets around the whole list";
-                //prompt += "As an example: for the sentence \"The rocket launched to the moon\" consider the following example structure";
-                prompt += "Here is an example structure [[{\"text\": \"The rocket\"},{\"options\": [{ \"id\": 1,\"text\": \"launched\"},{\"id\": 2,\"text\": \"played\"}],\"optionid\": 1}],[{\"text\": \"to the\"},{\"options\": [{\"id\": 1,\"text\": \"potato\"},{\"id\": 2,\"text\": \"moon\"}],\"optionid\": 2}]]";
+                Random random = new Random();
 
-
-                prompt = prompt + " Only return the structure without other comments";
-
-                try
+                if (EntityListScenario1 != null && EntityListScenario1.Count > 0)
                 {
-                    string Phrase = string.Empty;
-                    Phrase = await ChatConv(prompt);
-
-
-                    if (!string.IsNullOrEmpty(Phrase))
-                    {                        
-                        Phrase = Phrase.Replace("\n", "").Replace("\r", "").Replace("\t", "");
-
-                        var res = await _scenario1Repository.GetScenario1();
-
-                        Random random = new Random();
-                        int seed = random.Next();
-                        if (res != null && res.Id > 0)
-                        {
-                            return Ok(res);
-                        }
-
-
-                        return Json(Phrase);
-                    }
+                    int seed = random.Next(EntityListScenario1.Count);
+                    var RndListScenario1 = EntityListScenario1.Skip(seed).FirstOrDefault();
+                    return Ok(RndListScenario1);
                 }
-                catch (Exception Ex)
-                {
-
-                }
-
-
-                
-
-                //var EntityScenario1 = (from c in _context.Scenario1 select c).Skip(seed).FirstOrDefault();
-
-                //int index = new Random().Next(count);
-
-
 
 
                 return Json("");

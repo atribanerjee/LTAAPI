@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LTADB.POCO
 {
-    [Table("users")]
+    [Table("Scenario1")]
     public class Scenario1
     {
         [Key]
