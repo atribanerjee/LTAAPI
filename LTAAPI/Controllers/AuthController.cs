@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Net.Mail;
 using static LTAAPI.Services.AuthService;
 
@@ -150,8 +151,20 @@ namespace LTAAPI.Controllers
 
                 if (await _authRepository.UpdatePassword(ID, model.Password))
                 {
-                    //await _authRepository.SendResetPasswordConfirmationEmail(user.Email);
-                    return Ok("Password updated successfully.");
+                    //await _authRepository.SendResetPasswordConfirmationEmail(user.Email);                    
+                    Dictionary<string, string> objDict = new Dictionary<string, string>();
+                    objDict.Add("User", user.FirstName);
+                    objDict.Add("Year", DateTime.UtcNow.AddYears(1).Year.ToString());                    
+
+                    if (await _authRepository.SendEmailAsync("LTA (Support) : Reset Password Confirmation", user.Email, "PasswordUpdatedConfirmation.html", objDict))
+                    {
+                        return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Reset password Confirmation email sent successfully." });
+                    }
+                    else
+                    {
+                        return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Reset password Confirmation email sending failed." });
+                    }
+                    //return Ok("Password updated successfully.");
                 }
                 else
                 {

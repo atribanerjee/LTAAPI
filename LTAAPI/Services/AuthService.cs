@@ -270,17 +270,13 @@ namespace LTAAPI.Services
 
         public async Task<UsersModel> CheckTokenValidation(ResetPasswordModel model)
         {
-
-
             UsersModel? ReturnModel = new UsersModel();
             try
             {
-
                 ReturnModel = await (from u in _context.Users
                                      where u.ResetPasswordToken == model.ResetPasswordToken
                                      && u.IsTokenValid
                                      && u.IsActive
-
                                      select new UsersModel
                                      {
                                          ID = u.ID,
@@ -325,5 +321,7 @@ namespace LTAAPI.Services
             }
             return result;
         }
+
+        
     }
 }
