@@ -50,9 +50,9 @@ namespace LTAAPI.Controllers
         }
 
 
-        [Route("forgotPassword")]
+        [Route("forgotPassword{email}")]
         [AllowAnonymous]
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> ForgetPassword(string email)
         {
 
