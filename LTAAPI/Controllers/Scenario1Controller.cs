@@ -28,7 +28,7 @@ namespace LTAAPI.Controllers
             _scenario1Repository = scenario1Repository;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet]
         [Route("generateimage")]
         public async Task<IActionResult> GenerateImage()
@@ -68,7 +68,7 @@ namespace LTAAPI.Controllers
             return Json("");
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpGet]
         [Route("generaterandomimage")]
         public async Task<IActionResult> GenerateRandomimage()
@@ -87,14 +87,7 @@ namespace LTAAPI.Controllers
                 }
 
 
-                return Json("");
-
-                //if (!string.IsNullOrEmpty(Phrase))
-                //{
-                //    //Phrase = Phrase.Trim();
-                //    Phrase = Phrase.Replace("\n", "").Replace("\r", "").Replace("\t", "");
-                //    return Json(Phrase);
-                //}
+                return Json("");                
             }
             catch (Exception Ex)
             {
