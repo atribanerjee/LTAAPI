@@ -73,7 +73,7 @@ namespace LTAAPI.Controllers
                         objDict.Add("User", ReturnModel.FirstName);
                         objDict.Add("Year", DateTime.UtcNow.AddYears(1).Year.ToString());
 
-                        objDict.Add("URL", _Configuration["MailHelperSettings:BaseURl"] + "/resetpassword/id:" + guid);
+                        objDict.Add("URL", _Configuration["WebApplicationCommon:BaseURl"] + "/resetpassword/" + guid);
 
                         if (await _authRepository.SendEmailAsync("LTA (Support) : Reset Password", ReturnModel.Email, "ForgotPassword.html", objDict))
                         {
