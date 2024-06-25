@@ -73,7 +73,7 @@ namespace LTAAPI.Controllers
                         objDict.Add("User", ReturnModel.FirstName);
                         objDict.Add("Year", DateTime.UtcNow.AddYears(1).Year.ToString());
 
-                        objDict.Add("URL", _Configuration["WebApplicationCommon:BaseURl"] + "/resetpassword/" + guid);
+                        objDict.Add("URL", _Configuration["WebApplicationCommon:BaseURl"] + "reset-password/" + guid);
 
                         if (await _authRepository.SendEmailAsync("LTA (Support) : Reset Password", ReturnModel.Email, "ForgotPassword.html", objDict))
                         {
@@ -151,7 +151,7 @@ namespace LTAAPI.Controllers
                 if (await _authRepository.UpdatePassword(ID, model.Password))
                 {
                     //await _authRepository.SendResetPasswordConfirmationEmail(user.Email);
-                    return Ok("Password updated successfully.");
+                    return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Password updated successfully." });
                 }
                 else
                 {
