@@ -70,7 +70,7 @@ namespace LTAAPI.Controllers
 
         //[Authorize]
         [HttpGet]
-        [Route("Generaterandomimage")]
+        [Route("generaterandomimage")]
         public async Task<IActionResult> GenerateRandomimage()
         {
             try
