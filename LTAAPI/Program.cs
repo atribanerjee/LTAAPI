@@ -55,6 +55,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<IAuthRepository, AuthService>();
 builder.Services.AddScoped<IJWTRepository, JWTService>();
 
+builder.Services.AddScoped<IScenario1Repository, Scenario1Service>();
+
 
 var app = builder.Build();
 

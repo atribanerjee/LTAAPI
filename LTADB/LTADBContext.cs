@@ -10,5 +10,6 @@ namespace LTADB
         }
 
         public DbSet<users> Users { get; set; }
+        public DbSet<Scenario1> Scenario1 { get; set; }
     }
 }
