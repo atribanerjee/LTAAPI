@@ -53,14 +53,14 @@ namespace LTAAPI.Controllers
         [Route("forgotPassword")]
         [AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> ForgetPassword([FromForm] LogInViewModel model)
+        public async Task<IActionResult> ForgetPassword(string email)
         {
 
             UsersModel? ReturnModel = new UsersModel();
 
-            if (!string.IsNullOrEmpty(model.emailid))
+            if (!string.IsNullOrEmpty(email))
             {
-                ReturnModel = await _authRepository.CheckEmailExits(model.emailid);
+                ReturnModel = await _authRepository.CheckEmailExits(email);
 
                 if (ReturnModel != null)
                 {
