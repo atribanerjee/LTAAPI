@@ -47,32 +47,11 @@ namespace LTAAPI.Controllers
 
             return NotFound();
         }
-        //-------------------------------
+        
 
         [Route("forgotPassword")]
         [AllowAnonymous]
-        [HttpPost]
-        //public async Task<IActionResult> ForgotPassword([FromBody] ForGotModel model)
-        //{
-        //    Guid g = Guid.NewGuid();
-        //    if (ModelState.IsValid)
-        //    {
-        //        var res = await _authRepository.ForgotPassword(model);
-        //        //var res = await _authRepository.IsExistUserEmail(model);
-        //        if (res != null && res.ID > 0)
-        //        {
-        //            String token = _jWTRepository.GenerateJWTToken(res);
-
-        //            //return Ok(new { Result = true, Token = "Bearer " + token });
-        //            return Ok(new { Result = true, Token = token });
-        //        }
-        //    }
-
-        //    return NotFound();
-        //}
-        
-        //--------------------------------
-        //[HttpPost]
+        [HttpPost]        
         public async Task<IActionResult> ForgetPassword([FromForm] LogInViewModel model)
         {
             //LogInViewModel lvm = new LogInViewModel();
