@@ -16,6 +16,7 @@ namespace LTAAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    //[Authorize]
     public class Scenario1Controller : Controller
     {
 
@@ -28,7 +29,7 @@ namespace LTAAPI.Controllers
             _scenario1Repository = scenario1Repository;
         }
 
-        [Authorize]
+        
         [HttpGet]
         [Route("generateimage")]
         public async Task<IActionResult> GenerateImage()
@@ -68,7 +69,7 @@ namespace LTAAPI.Controllers
             return Json("");
         }
 
-        [Authorize]
+        
         [HttpGet]
         [Route("generaterandomimage")]
         public async Task<IActionResult> GenerateRandomimage()
@@ -83,7 +84,7 @@ namespace LTAAPI.Controllers
                 {
                     int seed = random.Next(EntityListScenario1.Count);
                     var RndListScenario1 = EntityListScenario1.Skip(seed).FirstOrDefault();
-                    return Ok(RndListScenario1);
+                    return Json(RndListScenario1.JsonText);
                 }
 
 
@@ -98,8 +99,7 @@ namespace LTAAPI.Controllers
         }
 
         [Route("ChatConv")]
-        [HttpPost]
-        [Authorize]
+        [HttpPost]        
         public async Task<string> ChatConv(string inputText)
         {
             //var openai = new OpenAIAPI(new APIAuthentication("sk-lta-account-TDVpYUvmiqKcd2WWqIqsT3BlbkFJSIYhIeQVoTpMUNo0JTV3"));

@@ -93,7 +93,7 @@ namespace LTAAPI.Services
                 if (loginModel != null && !String.IsNullOrEmpty(loginModel.Email) && !String.IsNullOrEmpty(loginModel.Password))
                 {
 
-                    var user = _context.Users.FirstOrDefault(u => u.Email == loginModel.Email);
+                    var user = _context.Users.FirstOrDefault(u => u.Email == loginModel.Email && u.IsActive);
                     if (user != null && !string.IsNullOrEmpty(user.Password))
                     {
                         string hashedPasswordFromDatabase = user.Password;
