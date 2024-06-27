@@ -18,6 +18,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 builder.Services.AddDbContext<LTADBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 //JWT
@@ -41,22 +42,70 @@ builder.Services.AddAuthentication(options =>
 });
 
 //Add Authentication to Swagger UI
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddSwaggerGen(opt =>
 {
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
+        Description = "Please enter token",
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
     });
-    options.OperationFilter<SecurityRequirementsOperationFilter>();
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
 });
+
+//builder.Services.AddSwaggerGen(options =>
+//{
+//    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+//    {
+//        In = ParameterLocation.Header,
+//        Description = "Please enter token",
+//        Name = "Authorization",
+//        Type = SecuritySchemeType.Http,
+//        //Type = SecuritySchemeType.ApiKey,
+//        BearerFormat = "JWT",
+//        Scheme = "bearer"
+
+//    });
+//    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+//    {
+//        {
+//            new OpenApiSecurityScheme
+//            {
+//                Reference = new OpenApiReference
+//                {
+//                    Type=ReferenceType.SecurityScheme,
+//                    Id="Bearer"
+//                }
+//            },
+//            new string[]{}
+//        }
+//    });
+
+//    options.OperationFilter<SecurityRequirementsOperationFilter>();
+//});
+
+
 
 builder.Services.AddScoped<IAuthRepository, AuthService>();
 builder.Services.AddScoped<IJWTRepository, JWTService>();
-
 builder.Services.AddScoped<IScenario1Repository, Scenario1Service>();
-
+builder.Services.AddScoped<IScoreBoardRepository, ScoreBoardService>();
 
 var app = builder.Build();
 

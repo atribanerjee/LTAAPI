@@ -34,7 +34,7 @@ namespace LTAAPI.Services
             {
                 if (!String.IsNullOrEmpty(email))
                 {
-                    var en = await _context.Users.Where(x => x.Email == email).FirstOrDefaultAsync();
+                    var en = await _context.Users.Where(x => x.Email == email && x.IsActive).FirstOrDefaultAsync();
                     if (en != null && en.ID > 0)
                     {
                         return true;
@@ -53,7 +53,7 @@ namespace LTAAPI.Services
             {
                 if (!String.IsNullOrEmpty(Username))
                 {
-                    var en = await _context.Users.Where(x => x.UserName == Username || x.Email == Email).FirstOrDefaultAsync();
+                    var en = await _context.Users.Where(x => (x.UserName == Username || x.Email == Email) && x.IsActive).FirstOrDefaultAsync();
                     if (en != null && en.ID > 0)
                     {
                         return true;
@@ -72,7 +72,7 @@ namespace LTAAPI.Services
             {
                 if (!String.IsNullOrEmpty(Username))
                 {
-                    var en = await _context.Users.Where(x => x.UserName == Username).FirstOrDefaultAsync();
+                    var en = await _context.Users.Where(x => x.UserName == Username && x.IsActive).FirstOrDefaultAsync();
                     if (en != null && en.ID > 0)
                     {
                         return true;
@@ -93,25 +93,22 @@ namespace LTAAPI.Services
                 if (loginModel != null && !String.IsNullOrEmpty(loginModel.Email) && !String.IsNullOrEmpty(loginModel.Password))
                 {
 
-                    var user = _context.Users.FirstOrDefault(u => u.Email == loginModel.Email && u.IsActive);
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginModel.Email && u.IsActive);
+
+
                     if (user != null && !string.IsNullOrEmpty(user.Password))
                     {
-                        string hashedPasswordFromDatabase = user.Password;
-                        bool passwordMatches = BCrypt.Net.BCrypt.Verify(loginModel.Password, hashedPasswordFromDatabase);
+                        bool passwordMatches = BCrypt.Net.BCrypt.Verify(loginModel.Password, user.Password);
+
                         if (passwordMatches)
                         {
+                            ReturnModel = new UsersModel
+                            {
+                                ID = user.ID,
+                                UserName = user.UserName,
+                                Email = user.Email
+                            };
 
-                            ReturnModel = await (from u in _context.Users
-                                                 where u.Email == loginModel.Email
-                                                 && u.Password == hashedPasswordFromDatabase
-                                                 && u.IsActive
-                                                 select new UsersModel
-                                                 {
-                                                     ID = u.ID,
-                                                     UserName = u.UserName,
-                                                     Email = u.Email
-
-                                                 }).FirstOrDefaultAsync();
                         }
                     }
                 }
@@ -234,13 +231,15 @@ namespace LTAAPI.Services
 
             try
             {
-                //----------------------------------
-                //var hashedPassword = Encrypt(model.Password);
-                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
-                //-----------------------------------
                 if (model != null && !String.IsNullOrEmpty(model.UserName) && !String.IsNullOrEmpty(model.Password) && !String.IsNullOrEmpty(model.Email))
                 {
+
                     Boolean IsExist = await IsExistUserNameAndEmail(model.UserName, model.Email);
+
+                    //----------------------------------
+                    var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
+                    //-----------------------------------
+
                     if (!IsExist)
                     {
                         var entity = new users();
@@ -248,7 +247,6 @@ namespace LTAAPI.Services
                         entity.LastName = model.LastName;
                         entity.Email = model.Email;
                         entity.UserName = model.UserName;
-                        //entity.Password = model.Password;
                         entity.Password = hashedPassword;
                         entity.Address = model.Address;
                         entity.PhoneNo = model.PhoneNo;
@@ -322,6 +320,6 @@ namespace LTAAPI.Services
             return result;
         }
 
-        
+
     }
 }

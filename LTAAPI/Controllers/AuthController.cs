@@ -109,7 +109,7 @@ namespace LTAAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterRequestModel model) //, string password)
         {
-            //var hashedPassword = _passwordService.HashPassword(password);
+            
             Boolean result = await _authRepository.UserRegistation(model);
             if (result)
                 return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Success." });
