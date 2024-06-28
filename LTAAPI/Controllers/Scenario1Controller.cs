@@ -5,8 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenAI_API;
+using OpenAI_API.Completions;
+using OpenAI_API.Models;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 
 namespace LTAAPI.Controllers
 {
@@ -21,7 +24,7 @@ namespace LTAAPI.Controllers
             _configuration = conf;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         [Route("generateimage")]
         public async Task<IActionResult> GenerateImage()
@@ -32,25 +35,41 @@ namespace LTAAPI.Controllers
             
             prompt += "For each blank options create 2, 3 or 4 wordlist. ";
             prompt += "Also add answer key id. ";
-            prompt += "For each wordlist add into a json. ";
+            //prompt += "For each wordlist add into a json. ";
+
+            prompt += "For each wordlist add into a [[{\"text\": \"The rocket\"},{\"options\": [{\"id\": 1,\"text\": \"launched\"},{\"id\": 2,\"text\": \"played\"}],\"optionid\": 1}]] jsonPattern. ";
+
             //prompt += "put all the wordlists into one json list [] brackets around the whole list";
             //prompt += "As an example: for the sentence \"The rocket launched to the moon\" consider the following example structure";
             prompt += "Here is an example structure "+ jsonPattern;
 
-
             prompt = prompt + " Only return the structure without other comments";
+            //prompt = prompt + " Only return actual JSON format structure without other comments";
 
             try
             {
+                //JsonElement rootElement;
                 string Phrase = string.Empty;
                 Phrase = await ChatConv(prompt); //("Generate a small sentence in english for standard 1");
 
-                
+                //--------------------------------
+                //string jsonFilePath = Phrase; // path the JSON file
+                //string jsonString = System.IO.File.ReadAllText(jsonFilePath);
+
+                //List<List<Question>> questions;
+                //using (JsonDocument document = JsonDocument.Parse(Phrase))
+                //{ 
+                //string jsonFile = await Post(document.RootElement);
+                 //rootElement = document.RootElement;
+
+                // Print out the JSON element
+                //Console.WriteLine(rootElement);
+                //}
+                //--------------------------------
                 if (!string.IsNullOrEmpty(Phrase))
-                {
-                    //Phrase = Phrase.Trim();
+                {                    
                     Phrase = Phrase.Replace("\n", "").Replace("\r", "").Replace("\t", "");
-                    return Json(Phrase);
+                    return Json(Phrase);                   
                 }
             }
             catch (Exception Ex)
@@ -60,7 +79,7 @@ namespace LTAAPI.Controllers
 
             return Json("");
         }
-
+        
         [Route("ChatConv")]
         [HttpPost]
         [Authorize]
@@ -77,5 +96,10 @@ namespace LTAAPI.Controllers
 
             return response;
         }
+
+
+       
+
+
     }
 }

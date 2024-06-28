@@ -40,4 +40,5 @@
         public String ResetPasswordToken { get; set; }
         public string Password { get; set; }
     }
+        
 }
