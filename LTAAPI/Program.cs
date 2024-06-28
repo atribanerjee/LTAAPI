@@ -69,37 +69,6 @@ builder.Services.AddSwaggerGen(opt =>
     });
 });
 
-//builder.Services.AddSwaggerGen(options =>
-//{
-//    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-//    {
-//        In = ParameterLocation.Header,
-//        Description = "Please enter token",
-//        Name = "Authorization",
-//        Type = SecuritySchemeType.Http,
-//        //Type = SecuritySchemeType.ApiKey,
-//        BearerFormat = "JWT",
-//        Scheme = "bearer"
-
-//    });
-//    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-//    {
-//        {
-//            new OpenApiSecurityScheme
-//            {
-//                Reference = new OpenApiReference
-//                {
-//                    Type=ReferenceType.SecurityScheme,
-//                    Id="Bearer"
-//                }
-//            },
-//            new string[]{}
-//        }
-//    });
-
-//    options.OperationFilter<SecurityRequirementsOperationFilter>();
-//});
-
 
 
 builder.Services.AddScoped<IAuthRepository, AuthService>();
