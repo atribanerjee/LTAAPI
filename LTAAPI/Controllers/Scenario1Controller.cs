@@ -37,13 +37,14 @@ namespace LTAAPI.Controllers
             prompt += "Also add answer key id. ";
             //prompt += "For each wordlist add into a json. ";
 
-            prompt += "For each wordlist add into a [[{\"text\": \"The rocket\"},{\"options\": [{\"id\": 1,\"text\": \"launched\"},{\"id\": 2,\"text\": \"played\"}],\"optionid\": 1}]] jsonPattern. ";
+            prompt += "For each wordlist always add into [[{\"text\": \"The rocket\"},{\"options\": [{\"id\": 1,\"text\": \"launched\"},{\"id\": 2,\"text\": \"played\"}],\"optionid\": 1}]] json Pattern. ";
 
             //prompt += "put all the wordlists into one json list [] brackets around the whole list";
             //prompt += "As an example: for the sentence \"The rocket launched to the moon\" consider the following example structure";
             prompt += "Here is an example structure "+ jsonPattern;
 
-            prompt = prompt + " Only return the structure without other comments";
+            //prompt = prompt + " Only return the structure without other comments";
+            prompt = prompt + " Only return the structure into [[{\"text\": \"The rocket\"},{\"options\": [{\"id\": 1,\"text\": \"launched\"},{\"id\": 2,\"text\": \"played\"}],\"optionid\": 1}]] json Pattern without other comments and no other json Pattern";
             //prompt = prompt + " Only return actual JSON format structure without other comments";
 
             try
