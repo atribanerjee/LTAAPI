@@ -16,7 +16,7 @@ namespace LTAAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class Scenario1Controller : Controller
     {
 
