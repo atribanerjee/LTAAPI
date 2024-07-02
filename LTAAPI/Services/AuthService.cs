@@ -329,10 +329,10 @@ namespace LTAAPI.Services
 
                 if (user != null && user.ID > 0)
                 {
-                    if(user.Password == hashedPassword)
+                    if (BCrypt.Net.BCrypt.Verify(password, user.Password))
                     {
                         result = true;
-                    }                    
+                    }
                 }
             }
             catch (Exception ex)

@@ -145,7 +145,7 @@ namespace LTAAPI.Controllers
             var user = await _authRepository.CheckTokenValidation(model);
             if (user != null && user.ID > 0)
             {
-                if (await _authRepository.CheckOldPassword(user.ID, model.Password))
+                if (!await _authRepository.CheckOldPassword(user.ID, model.Password))
                 {
                     Int64 ID = 0;
                     if (user.ID > 0)
