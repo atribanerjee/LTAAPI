@@ -145,28 +145,35 @@ namespace LTAAPI.Controllers
             var user = await _authRepository.CheckTokenValidation(model);
             if (user != null && user.ID > 0)
             {
-                Int64 ID = 0;
-                if (user.ID > 0)
-                    ID = user.ID;
-
-                if (await _authRepository.UpdatePassword(ID, model.Password))
+                if (await _authRepository.CheckOldPassword(user.ID, model.Password))
                 {
-                    Dictionary<string, string> objDict = new Dictionary<string, string>();
-                    objDict.Add("User", user.FirstName);
-                    objDict.Add("Year", DateTime.UtcNow.AddYears(1).Year.ToString());
+                    Int64 ID = 0;
+                    if (user.ID > 0)
+                        ID = user.ID;
 
-                    if (await _authRepository.SendEmailAsync("LTA (Support) : Reset Password Confirmation", user.Email, "PasswordUpdatedConfirmation.html", objDict))
+                    if (await _authRepository.UpdatePassword(ID, model.Password))
                     {
-                        return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Reset password confirmation email sent successfully." });
+                        Dictionary<string, string> objDict = new Dictionary<string, string>();
+                        objDict.Add("User", user.FirstName);
+                        objDict.Add("Year", DateTime.UtcNow.AddYears(1).Year.ToString());
+
+                        if (await _authRepository.SendEmailAsync("LTA (Support) : Reset Password Confirmation", user.Email, "PasswordUpdatedConfirmation.html", objDict))
+                        {
+                            return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Reset password confirmation email sent successfully." });
+                        }
+                        else
+                        {
+                            return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Password updated but, reset password confirmation email sending failed." });
+                        }
                     }
                     else
                     {
-                        return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Password updated but, reset password confirmation email sending failed." });
+                        return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Password updation is failed." });
                     }
                 }
                 else
                 {
-                    return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Password updation is failed." });
+                    return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Password updation is failed. Please do not use an used password. Try with a new password." });
                 }
             }
             else

@@ -15,6 +15,6 @@ namespace LTAAPI.Interfaces
         Task<UsersModel> CheckEmailExits(string EmailID);        
         Task<UsersModel> CheckTokenValidation(ResetPasswordModel model);
         Task<bool> UpdatePassword(Int64 id, string password);
-       
+        Task<bool> CheckOldPassword(Int64 id, string password);
     }
 }

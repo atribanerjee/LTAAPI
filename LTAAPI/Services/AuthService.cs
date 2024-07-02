@@ -319,7 +319,29 @@ namespace LTAAPI.Services
             }
             return result;
         }
+        public async Task<bool> CheckOldPassword(Int64 id, string password)
+        {
+            bool result = false;
+            try
+            {
+                var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+                var user = await _context.Users.Where(x => x.ID == id).FirstOrDefaultAsync();
 
+                if (user != null && user.ID > 0)
+                {
+                    if(user.Password == hashedPassword)
+                    {
+                        result = true;
+                    }                    
+                }
+            }
+            catch (Exception ex)
+            {
+
+
+            }
+            return result;
+        }
 
     }
 }
