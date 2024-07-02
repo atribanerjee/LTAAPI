@@ -78,26 +78,26 @@ namespace LTAAPI.Controllers
 
                         if (await _authRepository.SendEmailAsync("LTA (Support) : Reset Password", ReturnModel.Email, "ForgotPassword.html", objDict))
                         {
-                            return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Reset password email sent successfully." });
+                            return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Message = "Reset password email sent successfully." });
                         }
                         else
                         {
-                            return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Token generated but email sending failed." });
+                            return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Message = "Token generated but email sending failed." });
                         }
                     }
                     else
                     {
-                        return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Token generation is failed." });
+                        return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Message = "Token generation is failed." });
                     }
                 }
                 else
                 {
-                    return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Invalid email address." });
+                    return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Message = "Invalid email address." });
                 }
             }
             else
             {
-                return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Email address required." });
+                return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Message = "Email address required." });
             }
 
         }
@@ -112,9 +112,9 @@ namespace LTAAPI.Controllers
             
             Boolean result = await _authRepository.UserRegistation(model);
             if (result)
-                return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Success." });
+                return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Message = "Success." });
             else
-                return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Duplicate username or emmail." });
+                return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Message = "Duplicate username or emmail." });
         }
 
         [Route("checkifusernameexists{username}")]
@@ -159,26 +159,26 @@ namespace LTAAPI.Controllers
 
                         if (await _authRepository.SendEmailAsync("LTA (Support) : Reset Password Confirmation", user.Email, "PasswordUpdatedConfirmation.html", objDict))
                         {
-                            return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Meassge = "Reset password confirmation email sent successfully." });
+                            return Ok(new { Result = true, StatusCode = StatusCodes.Status200OK, Message = "Reset password confirmation email sent successfully." });
                         }
                         else
                         {
-                            return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Password updated but, reset password confirmation email sending failed." });
+                            return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Message = "Password updated but, reset password confirmation email sending failed." });
                         }
                     }
                     else
                     {
-                        return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Password updation is failed." });
+                        return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Message = "Password updation is failed." });
                     }
                 }
                 else
                 {
-                    return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Password updation is failed. Please do not use an used password. Try with a new password." });
+                    return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Message = "Password updation is failed. Please do not use an used password. Try with a new password." });
                 }
             }
             else
             {
-                return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Meassge = "Invalid token." });
+                return Ok(new { Result = false, StatusCode = StatusCodes.Status500InternalServerError, Message = "Invalid token." });
             }
         }
     }
