@@ -41,13 +41,12 @@ namespace LTAAPI.Controllers
                 if (res != null && res.ID > 0)
                 {
                     String token = _jWTRepository.GenerateJWTToken(res);
-
-                    //return Ok(new { Result = true, Token = "Bearer " + token });
+                    
                     return Ok(new { Result = true, Token = token });
                 }
             }
 
-            return NotFound();
+            return Ok(new { Result = false, Token = String.Empty });
         }
 
 
